@@ -16,6 +16,7 @@ GameObject::GameObject(int posX, int posY, int boundX, int boundY, LiquidCrystal
   _frames = NULL;
   _display_frame = NULL;
   _animating = false;
+  _drawing = true;
   _total_frames = 0;
   _current_frame = 0;
   // Set LCD reference
@@ -118,14 +119,17 @@ void GameObject::add_frame(char objectArt = '\0', int charPosInCGRAM = -1, byte 
 
 void GameObject::draw()
 {
-  _lcd->setCursor(_posY, _posX);
-  if (_display_frame->usingCustomArt == true)
+  if (_drawing == true)
   {
-    _lcd->write(_display_frame->charPosInCGRAM);
-  }
-  else
-  {
-    _lcd->write(_display_frame->objectArt);
+    _lcd->setCursor(_posY, _posX);
+    if (_display_frame->usingCustomArt == true)
+    {
+      _lcd->write(_display_frame->charPosInCGRAM);
+    }
+    else
+    {
+      _lcd->write(_display_frame->objectArt);
+    }
   }
 }
 
@@ -178,6 +182,16 @@ void GameObject::set_animating(bool value)
 bool GameObject::get_animating()
 {
   return _animating;
+}
+
+void GameObject::set_drawing(bool value)
+{
+  _drawing = value;
+}
+
+bool GameObject::get_drawing()
+{
+  return _drawing;
 }
 
 void GameObject::move(int direction)

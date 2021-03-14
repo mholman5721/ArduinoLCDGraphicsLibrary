@@ -53,6 +53,26 @@ byte SHIP[] = {
     B11000,
     B11110};
 
+byte ASTEROID1[] = {
+    B01110,
+    B10001,
+    B10010,
+    B01001,
+    B10001,
+    B10001,
+    B10010,
+    B01100};
+
+byte ASTEROID2[] = {
+    B00110,
+    B01001,
+    B10010,
+    B10001,
+    B01001,
+    B10010,
+    B10001,
+    B01110};
+
 // Game functions
 void reset_asteroid(GameObject *asteroid);
 void randomize_all_asteroids();
@@ -73,6 +93,7 @@ const int num_cols = 4;
 // Game objects
 PortraitInt *score_display;
 GameObject *player;
+GameObject *laser;
 GameObject *asteroids[num_asteroids];
 
 void setup()
@@ -92,18 +113,34 @@ void setup()
   // Set up player
   player = new GameObject(1, 0, num_cols, num_rows, &lcd);
   player->add_frame('\0', 4, SHIP);
-  player->add_frame('.', -1, NULL);
-  player->add_frame('o', -1, NULL);
-  player->add_frame('0', -1, NULL);
-  player->set_animation_wait_time(100);
-  player->set_animating(true);
+  player->add_frame('*', -1, NULL);
+  player->add_frame(' ', -1, NULL);
+  player->add_frame('\0', 4, SHIP);
+  player->add_frame('*', -1, NULL);
+  player->add_frame(' ', -1, NULL);
+  player->add_frame('\0', 4, SHIP);
+  player->add_frame('*', -1, NULL);
+  player->add_frame(' ', -1, NULL);
+  player->set_animation_wait_time(150);
+  player->set_animating(false);
 
+  // Set up laser
+  laser = new GameObject(1, 0, num_cols, num_rows, &lcd);
+  laser->add_frame('-', -1, NULL);
+  laser->set_drawing(false);
 
   // Set up asteroids
   for (int i = 0; i < num_asteroids; i++)
   {
     asteroids[i] = new GameObject(0, 0, num_cols, num_rows, &lcd);
-    asteroids[i]->add_frame('*', -1, NULL);
+    if (i % 2 == 0)
+    {
+      asteroids[i]->add_frame('\0', 5, ASTEROID1);
+    }
+    else
+    {
+      asteroids[i]->add_frame('\0', 6, ASTEROID2);
+    }
   }
   randomize_all_asteroids();
 }
@@ -121,6 +158,9 @@ void loop()
 
   static unsigned long score_lastTime = 0;
   static const unsigned long score_wait_time = 500;
+
+  // gameplay variables
+  static bool playerDying = false;
 
   char key = keypad.getKey();
 
@@ -173,14 +213,9 @@ void loop()
         // If an asteroid has collided with the player, reset the score time and set score to zero before starting the game over
         if (asteroids[i]->check_collision(player) == true)
         {
-          randomize_all_asteroids();
-          player->erase_position();
-          player->set_posX(1);
-          player->set_posY(0);
-          score_lastTime = currentTime;
-          score_value = 0;
-          start_lastTime = currentTime;
-          game_state = STARTING;
+          reset_asteroid(asteroids[i]);
+          player->set_animating(true);
+          playerDying = true;
         }
 
         // If an asteroid has reached the 'bottom' of the screen, make it reappear at the top
@@ -188,6 +223,22 @@ void loop()
         {
           reset_asteroid(asteroids[i]);
         }
+      }
+
+      // Go through player death animation, then reset the game
+      if (playerDying == true && player->get_current_frame() == player->get_total_frames() - 1)
+      {
+        player->set_animating(false);
+        player->set_current_frame(0);
+
+        randomize_all_asteroids();
+        player->erase_position();
+        player->set_posX(1);
+        player->set_posY(0);
+        score_lastTime = currentTime;
+        score_value = 0;
+        start_lastTime = currentTime;
+        game_state = STARTING;
       }
 
       // Increment score values every 'x' milliseconds
@@ -218,7 +269,7 @@ void loop()
 
     player->update_animation_timer(currentTime);
     player->draw();
-    
+
     for (int i = 0; i < num_asteroids; i++)
     {
       asteroids[i]->draw();

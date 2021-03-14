@@ -9,6 +9,7 @@
 #include <LiquidCrystal_I2C.h>
 #include "Arduino.h"
 
+// Struct to hold art asset information
 typedef struct art_frame
 {
   bool usingCustomArt;
@@ -30,6 +31,7 @@ private:
   art_frame_t *_display_frame;
   // Drawing varibales
   bool _animating;
+  bool _drawing;
   int _total_frames;
   int _current_frame;
   // LCD screen access
@@ -58,6 +60,8 @@ public:
   int get_total_frames();
   void set_animating(bool value);
   bool get_animating();
+  void set_drawing(bool value);
+  bool get_drawing();
   // Movement functions
   void move(int direction);
   int get_posX();
