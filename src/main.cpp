@@ -21,7 +21,7 @@
 #include <LiquidCrystal_I2C.h> // Library for LCD
 #include <Keypad.h>
 #include "PortraitIntegers.h"
-#include "GameObject.h"
+#include "GraphicsObject.h"
 
 // Wiring: SDA pin is connected to A4 and SCL pin to A5.
 // Connect to LCD via I2C, default address 0x27 (A0-A2 not jumpered)
@@ -37,10 +37,10 @@ char keys[ROW_NUM][COLUMN_NUM] = {
     {'7', '8', '9', 'C'},
     {'*', '0', '#', 'D'}};
 
-byte pin_rows[ROW_NUM] = {7, 0, 1, 3};      //connect to the row pinouts of the keypad
-byte pin_column[COLUMN_NUM] = {2, 4, 5, 6}; //connect to the column pinouts of the keypad
+byte pin_rows[ROW_NUM] = {7, 0, 1, 3};       //connect to the row pinouts of the keypad
+byte pin_columns[COLUMN_NUM] = {2, 4, 5, 6}; //connect to the column pinouts of the keypad
 
-Keypad keypad = Keypad(makeKeymap(keys), pin_rows, pin_column, ROW_NUM, COLUMN_NUM);
+Keypad keypad = Keypad(makeKeymap(keys), pin_rows, pin_columns, ROW_NUM, COLUMN_NUM);
 
 // "Art" assets
 byte SHIP[] = {
@@ -84,7 +84,7 @@ byte ASTEROID3[] = {
     B00000};
 
 // Game functions
-void reset_asteroid(GameObject *asteroid);
+void reset_asteroid(GraphicsObject *asteroid);
 void randomize_all_asteroids();
 void reset_game(unsigned long &score_lastTime, unsigned long &start_lastTime, unsigned long &currentTime);
 
@@ -103,9 +103,9 @@ const int num_cols = 4;
 
 // Game objects
 PortraitInt *score_display;
-GameObject *player;
-GameObject *laser;
-GameObject *asteroids[num_asteroids];
+GraphicsObject *player;
+GraphicsObject *laser;
+GraphicsObject *asteroids[num_asteroids];
 
 void setup()
 {
@@ -122,7 +122,7 @@ void setup()
   score_display = new PortraitInt(4, 19, 0, &lcd);
 
   // Set up player
-  player = new GameObject(1, 0, num_cols, num_rows, &lcd);
+  player = new GraphicsObject(1, 0, num_cols, num_rows, &lcd);
   player->add_frame('\0', 4, SHIP);
   player->add_frame('*', -1, NULL);
   player->add_frame(' ', -1, NULL);
@@ -136,7 +136,7 @@ void setup()
   player->set_animating(false);
 
   // Set up laser
-  laser = new GameObject(1, 0, num_cols, num_rows, &lcd);
+  laser = new GraphicsObject(1, 0, num_cols, num_rows, &lcd);
   laser->add_frame('-', -1, NULL);
   laser->set_drawing(false);
   laser->set_movement_wait_time(75);
@@ -144,7 +144,7 @@ void setup()
   // Set up asteroids
   for (int i = 0; i < num_asteroids; i++)
   {
-    asteroids[i] = new GameObject(0, 0, num_cols, num_rows, &lcd);
+    asteroids[i] = new GraphicsObject(0, 0, num_cols, num_rows, &lcd);
     if (i % 3 == 0)
     {
       asteroids[i]->add_frame('\0', 5, ASTEROID1);
@@ -346,7 +346,7 @@ void loop()
   }
 }
 
-void reset_asteroid(GameObject *asteroid)
+void reset_asteroid(GraphicsObject *asteroid)
 { // Reset all of an asteroid's values, so that it seems 'fresh' somewhere else
   asteroid->erase_position();
   asteroid->set_posY(num_rows - 1);

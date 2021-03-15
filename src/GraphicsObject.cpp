@@ -1,11 +1,11 @@
 /*
-   GameObject.cpp - Small game engine/ library for making games in 'portrait format' on an LCD display
+   GraphicsObject.cpp - A small grapics library for controlling characters/ animations on an LCD display
    Created by Matthew Holman, 12-14-2020
 */
 
-#include "GameObject.h"
+#include "GraphicsObject.h"
 
-GameObject::GameObject(int posX, int posY, int boundX, int boundY, LiquidCrystal_I2C *lcd)
+GraphicsObject::GraphicsObject(int posX, int posY, int boundX, int boundY, LiquidCrystal_I2C *lcd)
 {
   // Set position variables
   _posX = posX;
@@ -31,7 +31,7 @@ GameObject::GameObject(int posX, int posY, int boundX, int boundY, LiquidCrystal
   _animation_wait_time = 0;
 }
 
-GameObject::~GameObject()
+GraphicsObject::~GraphicsObject()
 {
   art_frame_t *ptr1 = NULL;
   art_frame_t *ptr2 = NULL;
@@ -50,6 +50,8 @@ GameObject::~GameObject()
     ptr1 = ptr1->next;
     free(ptr2);
   }
+  ptr1 = NULL;
+  ptr2 = NULL;
   _frames = NULL;
   _display_frame = NULL;
   _animating = false;
@@ -67,7 +69,7 @@ GameObject::~GameObject()
   _animation_wait_time = 0;
 }
 
-void GameObject::add_frame(char objectArt = '\0', int charPosInCGRAM = -1, byte objectBitPattern[8] = NULL)
+void GraphicsObject::add_frame(char objectArt = '\0', int charPosInCGRAM = -1, byte objectBitPattern[8] = NULL)
 {
   art_frame_t *newFrame = NULL;
   art_frame_t *ptr1 = NULL;
@@ -117,7 +119,7 @@ void GameObject::add_frame(char objectArt = '\0', int charPosInCGRAM = -1, byte 
   _display_frame = _frames;
 }
 
-void GameObject::draw()
+void GraphicsObject::draw()
 {
   if (_drawing == true)
   {
@@ -133,13 +135,13 @@ void GameObject::draw()
   }
 }
 
-void GameObject::erase_position()
+void GraphicsObject::erase_position()
 {
   _lcd->setCursor(_posY, _posX);
   _lcd->write(' ');
 }
 
-void GameObject::set_current_frame(int value)
+void GraphicsObject::set_current_frame(int value)
 {
   if (value >= _total_frames)
   {
@@ -164,37 +166,37 @@ void GameObject::set_current_frame(int value)
   }
 }
 
-int GameObject::get_current_frame()
+int GraphicsObject::get_current_frame()
 {
   return _current_frame;
 }
 
-int GameObject::get_total_frames()
+int GraphicsObject::get_total_frames()
 {
   return _total_frames;
 }
 
-void GameObject::set_animating(bool value)
+void GraphicsObject::set_animating(bool value)
 {
   _animating = value;
 }
 
-bool GameObject::get_animating()
+bool GraphicsObject::get_animating()
 {
   return _animating;
 }
 
-void GameObject::set_drawing(bool value)
+void GraphicsObject::set_drawing(bool value)
 {
   _drawing = value;
 }
 
-bool GameObject::get_drawing()
+bool GraphicsObject::get_drawing()
 {
   return _drawing;
 }
 
-void GameObject::move(int direction)
+void GraphicsObject::move(int direction)
 {
   switch (direction)
   {
@@ -231,33 +233,33 @@ void GameObject::move(int direction)
   }
 }
 
-int GameObject::get_posX()
+int GraphicsObject::get_posX()
 {
   return _posX;
 }
 
-void GameObject::set_posX(int value)
+void GraphicsObject::set_posX(int value)
 {
   _posX = value;
 }
 
-int GameObject::get_posY()
+int GraphicsObject::get_posY()
 {
   return _posY;
 }
 
-void GameObject::set_posY(int value)
+void GraphicsObject::set_posY(int value)
 {
   _posY = value;
 }
 
 // Movement timer functions
-void GameObject::set_movement_wait_time(int value)
+void GraphicsObject::set_movement_wait_time(int value)
 {
   _movement_wait_time = value;
 }
 
-void GameObject::update_movement_timer(unsigned long time)
+void GraphicsObject::update_movement_timer(unsigned long time)
 {
   _movement_current_time = time;
 
@@ -269,24 +271,24 @@ void GameObject::update_movement_timer(unsigned long time)
   }
 }
 
-bool GameObject::get_movement_timer_expired()
+bool GraphicsObject::get_movement_timer_expired()
 {
   return _movement_timer_Expired;
 }
 
-void GameObject::reset_movement_timer()
+void GraphicsObject::reset_movement_timer()
 {
   _movement_timer_Expired = false;
   _movement_last_time = _movement_current_time;
 }
 
 // Animation timer functions
-void GameObject::set_animation_wait_time(int value)
+void GraphicsObject::set_animation_wait_time(int value)
 {
   _animation_wait_time = value;
 }
 
-void GameObject::update_animation_timer(unsigned long time)
+void GraphicsObject::update_animation_timer(unsigned long time)
 {
   _animation_current_time = time;
 
@@ -308,7 +310,7 @@ void GameObject::update_animation_timer(unsigned long time)
   }
 }
 
-void GameObject::reset_animation_timer()
+void GraphicsObject::reset_animation_timer()
 {
   _animation_last_time = _animation_current_time;
   _display_frame = _frames;
@@ -316,7 +318,7 @@ void GameObject::reset_animation_timer()
 }
 
 // Collision detection functions
-bool GameObject::check_collision(GameObject *obj)
+bool GraphicsObject::check_collision(GraphicsObject *obj)
 {
   if ((obj->get_posX() == _posX) && (obj->get_posY() == _posY))
   {
@@ -325,7 +327,7 @@ bool GameObject::check_collision(GameObject *obj)
   return false;
 }
 
-bool GameObject::check_collision(int posX, int posY)
+bool GraphicsObject::check_collision(int posX, int posY)
 {
   if ((posX == _posX) && (posY == _posY))
   {

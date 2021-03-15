@@ -1,5 +1,5 @@
 /*
-   PortraitIntegers.h - Library for displaying integer values in 'portrait format' on an LCD display
+   PortraitIntegers.h - A library for displaying integer values in 'portrait format' on an LCD display
    Created by Matthew Holman, 12-14-2020
 */
 

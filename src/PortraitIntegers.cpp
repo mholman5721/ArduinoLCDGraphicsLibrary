@@ -1,5 +1,5 @@
 /*
-   PortraitIntegers.cpp - Library for displaying integer values in 'portrait format' on an LCD display
+   PortraitIntegers.cpp - A library for displaying integer values in 'portrait format' on an LCD display
    Created by Matthew Holman, 12-14-2020
 */
 

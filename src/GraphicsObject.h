@@ -1,10 +1,10 @@
 /*
-   GameObject.h - Small game engine/ library for making games in 'portrait format' on an LCD display
+   GraphicsObject.h - A small grapics library for controlling characters/ animations on an LCD display
    Created by Matthew Holman, 12-14-2020
 */
 
-#ifndef GAMEOBJECT_H
-#define GAMEOBJECT_H
+#ifndef GRAPHICSOBJECT_H
+#define GRAPHICSOBJECT_H
 
 #include <LiquidCrystal_I2C.h>
 #include "Arduino.h"
@@ -18,7 +18,7 @@ typedef struct art_frame
   art_frame *next;
 } art_frame_t;
 
-class GameObject
+class GraphicsObject
 {
 private:
   // Position variables
@@ -48,8 +48,8 @@ private:
 
 public:
   // Constructor/ Destructor functions
-  GameObject(int posX, int posY, int boundX, int boundY, LiquidCrystal_I2C *lcd);
-  ~GameObject();
+  GraphicsObject(int posX, int posY, int boundX, int boundY, LiquidCrystal_I2C *lcd);
+  ~GraphicsObject();
   // Art asset functions
   void add_frame(char objectArt, int charPosInCGRAM, byte objectBitPattern[8]);
   // Drawing functions
@@ -78,7 +78,7 @@ public:
   void update_animation_timer(unsigned long time);
   void reset_animation_timer();
   // Collision functions
-  bool check_collision(GameObject *obj);
+  bool check_collision(GraphicsObject *obj);
   bool check_collision(int posX, int posY);
 };
 
