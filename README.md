@@ -1,5 +1,7 @@
 # ArduinoLCDGraphicsLibrary
-The git repository for my custom LCD graphics library.
+This is the official git repository for Matthew Holman's ArduinoLCDGraphicsLibrary.
+
+This library can be used with LCD screens for the purposes of displaying individual animated characters, and integer values in 'portrait' format.
 
 Libraries Used In Demo
 ----------------------
